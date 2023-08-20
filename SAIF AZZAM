@@ -1,0 +1,35 @@
+import telebot
+
+bot = telebot.TeleBot('YOUR_BOT_TOKEN')
+
+@bot.message_handler(commands=['start'])
+def start(message):
+    bot.send_message(message.chat.id, 'مرحبًا! أنا بوت Telegram يقوم بحساب العمولة للعميل وحساب السعر مقابل السعودي على الزبون وحساب الدرهم مقابل الدولار. ما الذي تريدني القيام به؟')
+
+@bot.message_handler(content_types=['text'])
+def handle_text(message):
+    if message.text == 'حساب العمولة على العميل':
+        bot.send_message(message.chat.id, 'كم بتشل دولار مقابل سعودي من الصرافين؟')
+        exchange_rate = float(input())
+        bot.send_message(message.chat.id, 'بكم تحسب التحويل الخارجي للعميل؟')
+        commission = float(input())
+        bot.send_message(message.chat.id, f'الرسوم هي {(commission - exchange_rate) / exchange_rate:.1f}%.')
+        bot.send_message(message.chat.id, 'هل تريد أن تحاول مرة أخرى؟')
+    elif message.text == 'حساب السعر مقابل السعودي على الزبون':
+        bot.send_message(message.chat.id, 'كم بتشل دولار مقابل سعودي من الصرافين؟')
+        exchange_rate = float(input())
+        bot.send_message(message.chat.id, 'كم العمولة للصراف مقابل الحوالة الخارجيه في الالف؟')
+        commission_per_thousand = float(input())
+        bot.send_message(message.chat.id, f'السعر هو {(exchange_rate + commission_per_thousand) / 1000:.2f} ريال سعودي.')
+        bot.send_message(message.chat.id, 'هل تريد أن تحاول مرة أخرى؟')
+    elif message.text == 'حساب الدرهم مقابل الدولار':
+        bot.send_message(message.chat.id, 'كم بتشل درهم مقابل سعودي من الصرافين؟')
+        exchange_rate = float(input())
+        bot.send_message(message.chat.id, 'كم راجع الايداعات في الالف؟')
+        deposit_review_rate = float(input())
+        bot.send_message(message.chat.id, f'سعر الصرف هو {exchange_rate / (1 + deposit_review_rate):.2f} دولار أمريكي.')
+        bot.send_message(message.chat.id, 'هل تريد أن تحاول مرة أخرى؟')
+    else:
+        bot.send_message(message.chat.id, 'لا أعرف ما تقصد. هل يمكنك إعادة صياغة سؤالك؟')
+
+bot.polling()
